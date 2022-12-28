@@ -1,4 +1,16 @@
 {
+  "name": "www",
+  "version": "1.0.0",
+  "main": "webpack.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server",
+    "build": "webpack build"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+
   "devDependencies": {
     "webpack-dev-server": "^4.11.1"
   },
