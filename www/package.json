@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server",
-    "build": "webpack build"
+    "build": "webpack build",
+    "wasm_game": "file:../pkg"
   },
   "author": "",
   "license": "ISC",
