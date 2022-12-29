@@ -6,9 +6,25 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+        .content-wrapper {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+    </style>
 </head>
 <body>
-    <h1>voyager</h1>
-    <script src="index.js"></script>
+    <div class="content-wrapper">
+        <canvas id="snake-world"></canvas>
+        <canvas id="c1" width="600" height="300"></canvas>
+    </div>
+    <script src="bootstrap.js"></script>
 </body>
 </html>
