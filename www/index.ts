@@ -1,15 +1,17 @@
 // 引入wasm的js文件
-import init, { World, Direction } from '../pkg/wasm_game'
+import init, { World, Direction } from '../pkg/wasm_game';
+import { random } from "./utils/random";
 
 const WORLD_WIDTH = 8;         // 格子个数
 const REFRESH = 100;
 
 // 固定写法，必须先初始化
-init().then(() => {
+init().then(wasm => {
     const CELL_SIZE = 20;       // 格子的宽度
 
     // 令蛇出现的位置随机
-    const snakeIndex = Date.now() % (WORLD_WIDTH * WORLD_WIDTH)
+    // const snakeIndex = Date.now() % (WORLD_WIDTH * WORLD_WIDTH)
+    const snakeIndex = random(WORLD_WIDTH * WORLD_WIDTH);      // 这里由于Math.random()产生0到1之间的数，所以不会超出格子
 
     const world = World.new(WORLD_WIDTH, snakeIndex);
     const worldWidth = world.get_width();
@@ -60,14 +62,43 @@ init().then(() => {
     }
 
     function drawSnake() {
-        const snake_index = world.snake_head_index();
+        // 接收后端传来的指针
+        const snakeCells = new Uint32Array(
+            wasm.memory.buffer,         // buffer
+            world.snake_cells(),        // 指针
+            world.snake_length()        // 数据长度
+        );
+
+        // cellIndex是位置，i是蛇身的第几个元素
+        snakeCells.forEach((cellIndex, i) => {
+            const row = Math.floor(cellIndex / worldWidth);
+            const col = cellIndex % worldWidth;
+
+            context.beginPath();
+            // 给蛇头不同的颜色
+            context.fillStyle = i === 0 ? '#787878' : '#000000';
+            context.fillRect(
+                col * CELL_SIZE,
+                row * CELL_SIZE,
+                CELL_SIZE,
+                CELL_SIZE
+            );
+        })
+
+        context.stroke();
+    }
+
+    function drawReward() {
+        const reward_index = world.reward_cell();
 
         // 设snake_index是10，worldWidth是8，那么row = 1
-        const row = Math.floor(snake_index / worldWidth);   // 取整，获取蛇头当然所在行
+        const row = Math.floor(reward_index / worldWidth);   // 取整，获取蛇头当然所在行
         // col = 2，所以蛇头最初出现的坐标是(1,2)，下标从0开始
-        const col = snake_index % worldWidth;
+        const col = reward_index % worldWidth;
 
         context.beginPath();
+        // 给蛋不同的颜色
+        context.fillStyle = '#FF0000';
         context.fillRect(
             col * CELL_SIZE,
             row * CELL_SIZE,
@@ -81,6 +112,7 @@ init().then(() => {
     function draw() {
         drawWorld();
         drawSnake();
+        drawReward();
     }
 
     function run() {
