@@ -1,14 +1,17 @@
 // 引入wasm的js文件
-import init, { World } from '../pkg/wasm_game'
+import init, { World, Direction } from '../pkg/wasm_game'
 
-const GRID_NUMBER = 8;         // 格子个数
-const REFRESH = 500;
+const WORLD_WIDTH = 8;         // 格子个数
+const REFRESH = 100;
 
 // 固定写法，必须先初始化
 init().then(() => {
     const CELL_SIZE = 20;       // 格子的宽度
 
-    const world = World.new(GRID_NUMBER);
+    // 令蛇出现的位置随机
+    const snakeIndex = Date.now() % (WORLD_WIDTH * WORLD_WIDTH)
+
+    const world = World.new(WORLD_WIDTH, snakeIndex);
     const worldWidth = world.get_width();
 
     // 创建画布
@@ -17,6 +20,24 @@ init().then(() => {
 
     canvas.width = worldWidth * CELL_SIZE;
     canvas.height = worldWidth * CELL_SIZE;
+
+    // 控制方向
+    document.addEventListener("keydown", e => {
+        switch (e.code) {
+            case "ArrowUp":
+                world.change_snake_direction(Direction.UP);
+                break;
+            case "ArrowDown":
+                world.change_snake_direction(Direction.DOWN);
+                break;
+            case "ArrowLeft":
+                world.change_snake_direction(Direction.LEFT);
+                break;
+            case "ArrowRight":
+                world.change_snake_direction(Direction.RIGHT);
+                break;
+        }
+    })
 
     function drawWorld() {
         context.beginPath();
