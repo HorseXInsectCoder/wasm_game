@@ -101,6 +101,19 @@ impl World {
         for i in 1..len {
             self.snake.body[i] = SnakeCell(temp[i-1].0);
         }
+
+        if self.reward_cell == self.snake_head_index() {
+            // 蛇身长度小于总格子数游戏才能继续
+            if self.snake_length() < self.size {
+                // 蛋被吃掉后，重新生成一个蛋
+                self.reward_cell = World::gen_reward_cell(self.size, &self.snake.body);
+
+                // 把蛋放到蛇头后面的位置，即蛇身的第一个位置
+                self.snake.body.push(SnakeCell(self.snake.body[1].0));
+            } else {
+                self.reward_cell = 123456789;       // 给一个特别大的数给前端用作游戏结束
+            }
+        }
     }
 
     // 寻找蛇身的下一个位置
@@ -169,7 +182,7 @@ impl World {
     //     self.snake.body[0].0 = index;
     // }
 
-    // 蛋不能在蛇身
+    // 蛋不能在蛇身，第一个参数max是格子总数，用于随机位置生成
     fn gen_reward_cell(max: usize, snake_body: &Vec<SnakeCell>) -> usize {
         let mut reward_cell;
         loop {
@@ -193,8 +206,6 @@ impl World {
     pub fn snake_length(&self) -> usize {
         self.snake.body.len()
     }
-
-
 }
 
 impl Snake {

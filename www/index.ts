@@ -107,6 +107,11 @@ init().then(wasm => {
         );
 
         context.stroke();
+
+        // 接收来自后端的结束指令
+        if (reward_index === 123456789) {
+            alert("Won");
+        }
     }
 
     function draw() {
