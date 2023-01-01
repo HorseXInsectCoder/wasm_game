@@ -122,7 +122,7 @@ impl World {
                 // 把蛋放到蛇头后面的位置，即蛇身的第一个位置
                 self.snake.body.push(SnakeCell(self.snake.body[1].0));
             } else {
-                self.reward_cell = 123456789;       // 给一个特别大的数给前端用作游戏结束
+                self.status = Some(GameStatus::WON);
             }
         }
     }

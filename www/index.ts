@@ -1,9 +1,9 @@
 // 引入wasm的js文件
-import init, { World, Direction } from '../pkg/wasm_game';
+import init, { World, Direction, GameStatus } from '../pkg/wasm_game';
 import { random } from "./utils/random";
 
-const WORLD_WIDTH = 8;         // 格子个数
-const REFRESH = 100;
+const WORLD_WIDTH = 4;         // 格子个数
+const REFRESH = 500;
 
 // 固定写法，必须先初始化
 init().then(wasm => {
@@ -144,6 +144,13 @@ init().then(wasm => {
     }
 
     function run() {
+        // 当后端传来Option时，前端可以这样写！！！
+        const status = world.get_game_status();
+        if (status === GameStatus.WON || status === GameStatus.LOSE) {
+            gameControlBtn.textContent = "再玩一次？"
+            return;
+        }
+
         setTimeout(() => {
             // 清理画布
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -154,5 +161,4 @@ init().then(wasm => {
         }, REFRESH)
     }
 
-    run();
 })
