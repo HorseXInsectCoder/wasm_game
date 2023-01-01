@@ -18,12 +18,40 @@
             justify-content: center;
             flex-direction: column;
         }
+
+        .flex {
+            display: flex;
+        }
+
+        .label {
+            font-weight: bold;
+            margin-right: 13px;
+        }
+
+        .game-content {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="content-wrapper">
+        <div class="game-content">
+            <div class="flex">
+                <div class="label">
+                    Status:
+                </div>
+                <div id="game-status">
+                    None
+                </div>
+            </div>
+
+            <div class="flex">
+                <button id="game-control-btn">
+                    开始游戏
+                </button>
+            </div>
+        </div>
         <canvas id="snake-world"></canvas>
-        <canvas id="c1" width="600" height="300"></canvas>
     </div>
     <script src="bootstrap.js"></script>
 </body>

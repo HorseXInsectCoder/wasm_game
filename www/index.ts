@@ -16,6 +16,10 @@ init().then(wasm => {
     const world = World.new(WORLD_WIDTH, snakeIndex);
     const worldWidth = world.get_width();
 
+    const gameStatus = document.getElementById("game-status");
+    const gameControlBtn = document.getElementById("game-control-btn");
+
+
     // 创建画布
     const canvas = <HTMLCanvasElement>document.getElementById("snake-world");
     const context = canvas.getContext("2d");
@@ -38,6 +42,19 @@ init().then(wasm => {
             case "ArrowRight":
                 world.change_snake_direction(Direction.RIGHT);
                 break;
+        }
+    })
+
+    gameControlBtn.addEventListener("click", () => {
+        const status = world.get_game_status();
+        // Rust的None对应到JS是undefined
+        if (status == undefined) {
+            gameControlBtn.textContent = "游戏中...";
+            world.start_game();
+            run();
+        } else {
+            // 刷新
+            location.reload();
         }
     })
 
@@ -109,15 +126,21 @@ init().then(wasm => {
         context.stroke();
 
         // 接收来自后端的结束指令
-        if (reward_index === 123456789) {
-            alert("Won");
-        }
+        // if (reward_index === 123456789) {
+        //     alert("Won");
+        // }
+    }
+
+    // 展示游戏状态
+    function drawGameStatus() {
+        gameStatus.textContent = world.get_game_status_info();
     }
 
     function draw() {
         drawWorld();
         drawSnake();
         drawReward();
+        drawGameStatus();
     }
 
     function run() {
