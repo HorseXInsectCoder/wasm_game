@@ -19,7 +19,8 @@ pub struct World {
     size: usize,        // 总格子数
     snake: Snake,
     reward_cell: usize, // 蛋
-    next_cell: Option<SnakeCell>            // 用来判断当用户第一次控制方向后，后面就一直往该方向走，直到再次转向
+    next_cell: Option<SnakeCell>,            // 用来判断当用户第一次控制方向后，后面就一直往该方向走，直到再次转向
+    status: Option<GameStatus>,
 }
 
 // 蛇的身体格子
@@ -41,6 +42,15 @@ pub enum Direction {
     RIGHT
 }
 
+// 游戏状态
+#[wasm_bindgen]
+#[derive(PartialOrd, PartialEq, Copy, Clone)]
+pub enum GameStatus {
+    WON,
+    LOSE,
+    PLAYED,
+}
+
 
 #[wasm_bindgen]
 impl World {
@@ -52,7 +62,8 @@ impl World {
             size: width * width,
             reward_cell: World::gen_reward_cell(width * width, &snake.body),
             snake,
-            next_cell: None
+            next_cell: None,
+            status: None,
         }
     }
 
@@ -205,6 +216,25 @@ impl World {
     // 返回蛇身长度
     pub fn snake_length(&self) -> usize {
         self.snake.body.len()
+    }
+
+    pub fn start_game(&mut self) {
+        self.status = Some(GameStatus::PLAYED)
+    }
+
+    // 用于返回状态
+    pub fn get_game_status(&self) -> Option<GameStatus> {
+        self.status
+    }
+
+    // 用于返回状态的具体信息
+    pub fn get_game_status_info(&self) -> String {
+        match self.status {
+            Some(GameStatus::WON) => String::from("Won!"),
+            Some(GameStatus::PLAYED) => String::from("You're playing!"),
+            Some(GameStatus::LOSE) => String::from("You're Lose!"),
+            None => String::from("None!"),
+        }
     }
 }
 
