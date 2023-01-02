@@ -87,7 +87,9 @@ init().then(wasm => {
         );
 
         // cellIndex是位置，i是蛇身的第几个元素
-        snakeCells.forEach((cellIndex, i) => {
+        snakeCells
+            .filter((cellIdx, i) => !(i > 0 && cellIdx == snakeCells[0]))   // 蛇头碰到蛇身任何一个位置就输，然后蛇头不变成蛇身的颜色
+            .forEach((cellIndex, i) => {
             const row = Math.floor(cellIndex / worldWidth);
             const col = cellIndex % worldWidth;
 

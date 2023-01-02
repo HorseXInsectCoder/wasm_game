@@ -18,7 +18,7 @@ pub struct World {
     width: usize,
     size: usize,        // 总格子数
     snake: Snake,
-    reward_cell: usize, // 蛋
+    reward_cell: Option<usize>, // 蛋
     next_cell: Option<SnakeCell>,            // 用来判断当用户第一次控制方向后，后面就一直往该方向走，直到再次转向
     status: Option<GameStatus>,
 }
@@ -60,7 +60,7 @@ impl World {
         Self {
             width,
             size: width * width,
-            reward_cell: World::gen_reward_cell(width * width, &snake.body),
+            reward_cell: Some(World::gen_reward_cell(width * width, &snake.body)),
             snake,
             next_cell: None,
             status: None,
@@ -113,15 +113,22 @@ impl World {
             self.snake.body[i] = SnakeCell(temp[i-1].0);
         }
 
-        if self.reward_cell == self.snake_head_index() {
+        // 蛇头碰到蛇身，报错
+        if self.snake.body[1..len].contains(&self.snake.body[0]) {
+            self.status = Some(GameStatus::LOSE);
+        }
+
+        if self.reward_cell == Some(self.snake_head_index()) {
             // 蛇身长度小于总格子数游戏才能继续
             if self.snake_length() < self.size {
                 // 蛋被吃掉后，重新生成一个蛋
-                self.reward_cell = World::gen_reward_cell(self.size, &self.snake.body);
+                self.reward_cell = Some(World::gen_reward_cell(self.size, &self.snake.body));
 
                 // 把蛋放到蛇头后面的位置，即蛇身的第一个位置
                 self.snake.body.push(SnakeCell(self.snake.body[1].0));
             } else {
+                self.reward_cell = None;
+
                 self.status = Some(GameStatus::WON);
             }
         }
@@ -205,7 +212,7 @@ impl World {
         reward_cell
     }
 
-    pub fn reward_cell(&self) -> usize {
+    pub fn reward_cell(&self) -> Option<usize> {
         self.reward_cell
     }
 
